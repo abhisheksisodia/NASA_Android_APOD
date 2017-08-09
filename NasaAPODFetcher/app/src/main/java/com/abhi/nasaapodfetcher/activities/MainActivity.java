@@ -2,8 +2,11 @@ package com.abhi.nasaapodfetcher.activities;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.transition.AutoTransition;
+import android.transition.TransitionManager;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
@@ -29,6 +32,9 @@ public class MainActivity extends AppCompatActivity {
     private final static String API_KEY = "bZQuHkfWvBcjP9jVAEUuL4XeplcNASvimy6tytga";
     private AstroPicture astroPic;
 
+    @BindView(R.id.rootView)
+    ViewGroup rootView;
+
     @BindView(R.id.imageView)
     ImageView imageView;
 
@@ -38,8 +44,8 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.imageTitle)
     TextView titleView;
 
-    @BindView(R.id.fullscreenImageView)
-    ImageView fullscreenImageView;
+    @BindView(R.id.imageViewLayout)
+    RelativeLayout imageViewLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,12 +102,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void displayFullscreenImage() {
-        Glide.with(this)
-                .load(astroPic.getUrl())
-                .placeholder(R.mipmap.ic_launcher)
-                .crossFade()
-                .into(fullscreenImageView);
-        fullscreenImageView.setVisibility(View.VISIBLE);
+        AutoTransition autoTransition = new AutoTransition();
+        autoTransition.setDuration(350);
+        TransitionManager.beginDelayedTransition(rootView);
+
+        ViewGroup.LayoutParams params = imageViewLayout.getLayoutParams();
+        params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+        params.height = ViewGroup.LayoutParams.MATCH_PARENT;
+        imageView.setAdjustViewBounds(true);
+        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        imageViewLayout.setLayoutParams(params);
     }
 
     private void displayBadResponseErrorMessage(Response<AstroPicture> response) {
@@ -121,15 +131,5 @@ public class MainActivity extends AppCompatActivity {
 
     private void hideProgressBar() {
         progressBar.setVisibility(View.INVISIBLE);
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (fullscreenImageView.getVisibility() == View.VISIBLE) {
-            fullscreenImageView.setImageDrawable(null);
-            fullscreenImageView.setVisibility(View.GONE);
-        } else {
-            super.onBackPressed();
-        }
     }
 }
