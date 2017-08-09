@@ -1,9 +1,18 @@
 package com.abhi.nasaapodfetcher.activities;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
+import android.graphics.Point;
+import android.graphics.Rect;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -26,6 +35,10 @@ public class MainActivity extends AppCompatActivity {
     private final static String API_KEY = "bZQuHkfWvBcjP9jVAEUuL4XeplcNASvimy6tytga";
     private AstroPicture astroPic;
 
+    private Animator mCurrentAnimator;
+    private int mShortAnimationDuration;
+    Animation animZoomIn;
+
     @BindView(R.id.imageView)
     ImageView imageView;
 
@@ -35,6 +48,8 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.imageTitle)
     TextView titleView;
 
+    @BindView(R.id.fullscreenImageView)
+    ImageView fullscreenImageView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
         showProgressBar();
 
         if (API_KEY.isEmpty()) {
-            Toast.makeText(getApplicationContext(), "Please obtain valid API Key!", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), getResources().getText(R.string.invalid_api_key_msg), Toast.LENGTH_LONG).show();
             return;
         }
 
@@ -53,7 +68,6 @@ public class MainActivity extends AppCompatActivity {
         call.enqueue(new Callback<AstroPicture>() {
             @Override
             public void onResponse(Call<AstroPicture> call, Response<AstroPicture> response) {
-                int statusCode = response.code();
                 astroPic = response.body();
 
                 if (astroPic != null && response.isSuccessful()) {
@@ -68,6 +82,14 @@ public class MainActivity extends AppCompatActivity {
                 displayBadNetworkErrorMessage();
             }
         });
+
+        mShortAnimationDuration = 350;
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                displayFullscreenImage();
+            }
+        });
     }
 
     private void displayImageWithTitle() {
@@ -78,6 +100,15 @@ public class MainActivity extends AppCompatActivity {
                 .crossFade()
                 .into(imageView);
         titleView.setText(astroPic.getTitle());
+    }
+
+    private void displayFullscreenImage() {
+        Glide.with(this)
+                .load(astroPic.getUrl())
+                .placeholder(R.mipmap.ic_launcher)
+                .crossFade()
+                .into(fullscreenImageView);
+        fullscreenImageView.setVisibility(View.VISIBLE);
     }
 
     private void displayBadResponseErrorMessage(Response<AstroPicture> response) {
@@ -99,4 +130,13 @@ public class MainActivity extends AppCompatActivity {
         progressBar.setVisibility(View.INVISIBLE);
     }
 
+    @Override
+    public void onBackPressed() {
+        if (fullscreenImageView.getVisibility() == View.VISIBLE) {
+            fullscreenImageView.setImageDrawable(null);
+            fullscreenImageView.setVisibility(View.GONE);
+        } else {
+            super.onBackPressed();
+        }
+    }
 }

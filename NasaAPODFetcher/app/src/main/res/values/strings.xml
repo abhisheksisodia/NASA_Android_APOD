@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Space View</string>
+
+    <string name="invalid_api_key_msg">Please obtain valid api key</string>
     <string name="bad_response_error_msg">Bad response from the server</string>
     <string name="bad_network_error_msg">Unable to connect to the API</string>
 </resources>
