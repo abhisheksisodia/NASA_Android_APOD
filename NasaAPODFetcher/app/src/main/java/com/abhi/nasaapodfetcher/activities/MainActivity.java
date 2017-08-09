@@ -4,7 +4,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.transition.AutoTransition;
 import android.transition.TransitionManager;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -27,7 +26,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MainView {
 
     private final static String API_KEY = "bZQuHkfWvBcjP9jVAEUuL4XeplcNASvimy6tytga";
     private AstroPicture astroPic;
@@ -73,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
                 if (astroPic != null && response.isSuccessful()) {
                     displayImageWithTitle();
                 } else {
-                    displayBadResponseErrorMessage(response);
+                    displayBadResponseErrorMessage();
                 }
             }
 
@@ -122,22 +121,25 @@ public class MainActivity extends AppCompatActivity {
         imageViewLayout.setLayoutParams(params);
     }
 
-    private void displayBadResponseErrorMessage(Response<AstroPicture> response) {
+    @Override
+    public void displayBadResponseErrorMessage() {
         hideProgressBar();
         titleView.setText(getResources().getText(R.string.bad_response_error_msg));
-        Log.d("Bad Response", response.message());
     }
 
-    private void displayBadNetworkErrorMessage() {
+    @Override
+    public void displayBadNetworkErrorMessage() {
         hideProgressBar();
         titleView.setText(getResources().getText(R.string.bad_network_error_msg));
     }
 
-    private void showProgressBar(){
+    @Override
+    public void showProgressBar(){
         progressBar.setVisibility(View.VISIBLE);
     }
 
-    private void hideProgressBar() {
+    @Override
+    public void hideProgressBar() {
         progressBar.setVisibility(View.INVISIBLE);
     }
 }

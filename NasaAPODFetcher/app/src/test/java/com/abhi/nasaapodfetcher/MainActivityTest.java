@@ -1,6 +1,8 @@
 package com.abhi.nasaapodfetcher;
 
 import android.os.Build;
+import android.transition.Visibility;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -35,7 +37,6 @@ public class MainActivityTest {
         activity = Robolectric.setupActivity(MainActivity.class);
     }
 
-    // The test simply checks that our TextView exists
     @Test
     public void validateTextViewExists() {
         TextView imageTitle = (TextView) activity.findViewById(R.id.imageTitle);
@@ -50,7 +51,6 @@ public class MainActivityTest {
                 "Test".equals(imageTitle.getText().toString()));
     }
 
-    // The test simply checks that our image view exists
     @Test
     public void validateImageViewExists() {
         ImageView imageView = (ImageView) activity.findViewById(R.id.imageView);
@@ -58,8 +58,53 @@ public class MainActivityTest {
     }
 
     @Test
-    public void validateProgressBar() {
+    public void validateProgressBarExists() {
         ProgressBar progressBar = (ProgressBar) activity.findViewById(R.id.progressbar);
         assertNotNull("Progressbar could not be found", progressBar);
+    }
+
+    @Test
+    public void validateShowProgressBar() {
+        ProgressBar progressBar = (ProgressBar) activity.findViewById(R.id.progressbar);
+
+        // set visibility to visible and assert
+        activity.showProgressBar();
+        assertEquals(View.VISIBLE, progressBar.getVisibility());
+    }
+
+    @Test
+    public void validateHideProgressBar() {
+        ProgressBar progressBar = (ProgressBar) activity.findViewById(R.id.progressbar);
+        // set to visible first
+        activity.showProgressBar();
+        assertEquals(View.VISIBLE, progressBar.getVisibility());
+
+        // set visibility to invisible and assert
+        activity.hideProgressBar();
+        assertEquals(View.INVISIBLE, progressBar.getVisibility());
+    }
+
+    @Test
+    public void validateCorrectBadResponseErrorMessageIsShown() {
+        ProgressBar progressBar = (ProgressBar) activity.findViewById(R.id.progressbar);
+        TextView imageTitle = (TextView) activity.findViewById(R.id.imageTitle);
+        activity.showProgressBar();
+
+        activity.displayBadResponseErrorMessage();
+        assertEquals(View.INVISIBLE, progressBar.getVisibility());
+        assertTrue("TextView contains incorrect text",
+                "Bad response from the server".equals(imageTitle.getText().toString()));
+    }
+
+    @Test
+    public void validateCorrectBadNetworkErrorMessageIsShown() {
+        ProgressBar progressBar = (ProgressBar) activity.findViewById(R.id.progressbar);
+        TextView imageTitle = (TextView) activity.findViewById(R.id.imageTitle);
+        activity.showProgressBar();
+
+        activity.displayBadNetworkErrorMessage();
+        assertEquals(View.INVISIBLE, progressBar.getVisibility());
+        assertTrue("TextView contains incorrect text",
+                "Unable to connect to the API".equals(imageTitle.getText().toString()));
     }
 }
