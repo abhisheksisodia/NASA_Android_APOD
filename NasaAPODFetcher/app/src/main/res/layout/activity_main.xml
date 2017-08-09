@@ -23,6 +23,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_centerInParent="true"
+            android:adjustViewBounds="true"
             tools:background="@mipmap/ic_launcher"/>
 
         <ProgressBar
@@ -58,6 +59,7 @@
         android:id="@+id/fullscreenImageView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone" />
+        android:visibility="gone"
+        tools:background="@mipmap/ic_launcher"/>
 
 </LinearLayout>
