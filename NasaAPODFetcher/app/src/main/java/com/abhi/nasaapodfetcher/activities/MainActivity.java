@@ -54,11 +54,13 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         showProgressBar();
 
+        // check to make sure API_KEY is not empty
         if (API_KEY.isEmpty()) {
             Toast.makeText(getApplicationContext(), getResources().getText(R.string.invalid_api_key_msg), Toast.LENGTH_LONG).show();
             return;
         }
 
+        // obtain instance of Retrofit and use to make API calls
         ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
         Call<AstroPicture> call = apiService.getAPOD(API_KEY);
 
@@ -67,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(Call<AstroPicture> call, Response<AstroPicture> response) {
                 astroPic = response.body();
 
+                // display image with title if valid and successful response, otherwise show error message
                 if (astroPic != null && response.isSuccessful()) {
                     displayImageWithTitle();
                 } else {
@@ -76,22 +79,22 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<AstroPicture> call, Throwable t) {
+                //display different error message in case of network failure
                 displayBadNetworkErrorMessage();
             }
         });
 
-        final Animation startFadeOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_out_animation);
-
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                titleView.startAnimation(startFadeOutAnimation);
+                //fade out the image title and display full screen image
                 displayFullscreenImage();
             }
         });
     }
 
     private void displayImageWithTitle() {
+        // hide progress bar and use glide to load image from the url
         hideProgressBar();
         Glide.with(this)
                 .load(astroPic.getUrl())
@@ -102,6 +105,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void displayFullscreenImage() {
+        //load fadeout animation to be applied on the image title
+        final Animation startFadeOutAnimation = AnimationUtils
+                .loadAnimation(getApplicationContext(), R.anim.fade_out_animation);
+        titleView.startAnimation(startFadeOutAnimation);
+
         AutoTransition autoTransition = new AutoTransition();
         autoTransition.setDuration(350);
         TransitionManager.beginDelayedTransition(rootView);
