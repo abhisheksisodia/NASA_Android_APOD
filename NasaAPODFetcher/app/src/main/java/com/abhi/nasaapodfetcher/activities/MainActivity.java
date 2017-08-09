@@ -1,18 +1,9 @@
 package com.abhi.nasaapodfetcher.activities;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
-import android.graphics.Point;
-import android.graphics.Rect;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -34,10 +25,6 @@ public class MainActivity extends AppCompatActivity {
 
     private final static String API_KEY = "bZQuHkfWvBcjP9jVAEUuL4XeplcNASvimy6tytga";
     private AstroPicture astroPic;
-
-    private Animator mCurrentAnimator;
-    private int mShortAnimationDuration;
-    Animation animZoomIn;
 
     @BindView(R.id.imageView)
     ImageView imageView;
@@ -83,7 +70,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        mShortAnimationDuration = 350;
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
